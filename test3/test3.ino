@@ -12,6 +12,9 @@
 #define PIN10 31
 #define PIN11 34
 #define PIN12 37
+#define PIN13 40
+#define PIN14 43
+#define PIN15 46
 
 #define NUMPIXELS 20 // Number of NeoPixels in strand.
 
@@ -30,6 +33,9 @@ Adafruit_NeoPixel pixels09 = Adafruit_NeoPixel(NUMPIXELS, PIN09, NEO_GRB + NEO_K
 Adafruit_NeoPixel pixels10 = Adafruit_NeoPixel(NUMPIXELS, PIN10, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel pixels11 = Adafruit_NeoPixel(NUMPIXELS, PIN11, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel pixels12 = Adafruit_NeoPixel(NUMPIXELS, PIN12, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel pixels13 = Adafruit_NeoPixel(NUMPIXELS, PIN13, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel pixels14 = Adafruit_NeoPixel(NUMPIXELS, PIN14, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel pixels15 = Adafruit_NeoPixel(NUMPIXELS, PIN15, NEO_GRB + NEO_KHZ800);
 
 unsigned int timer = 0; // Time with no human on steps
 
@@ -64,19 +70,54 @@ int blueColor = 0;
 #define trigPin11 36
 #define echoPin12 38
 #define trigPin12 39
+#define echoPin13 41
+#define trigPin13 42
+#define echoPin14 45
+#define trigPin14 44
+#define echoPin15 48
+#define trigPin15 47
 
-unsigned long duration01; unsigned int distance01;
-unsigned long duration02; unsigned int distance02;
-unsigned long duration03; unsigned int distance03;
-unsigned long duration04; unsigned int distance04;
-unsigned long duration05; unsigned int distance05;
-unsigned long duration06; unsigned int distance06;
-unsigned long duration07; unsigned int distance07;
-unsigned long duration08; unsigned int distance08;
-unsigned long duration09; unsigned int distance09;
-unsigned long duration10; unsigned int distance10;
-unsigned long duration11; unsigned int distance11;
-unsigned long duration12; unsigned int distance12;
+unsigned long duration01; unsigned int distance01; unsigned int switch01;
+unsigned long duration02; unsigned int distance02; unsigned int switch02;
+unsigned long duration03; unsigned int distance03; unsigned int switch03;
+unsigned long duration04; unsigned int distance04; unsigned int switch04;
+unsigned long duration05; unsigned int distance05; unsigned int switch05;
+unsigned long duration06; unsigned int distance06; unsigned int switch06;
+unsigned long duration07; unsigned int distance07; unsigned int switch07;
+unsigned long duration08; unsigned int distance08; unsigned int switch08;
+unsigned long duration09; unsigned int distance09; unsigned int switch09;
+unsigned long duration10; unsigned int distance10; unsigned int switch10;
+unsigned long duration11; unsigned int distance11; unsigned int switch11;
+unsigned long duration12; unsigned int distance12; unsigned int switch12;
+unsigned long duration13; unsigned int distance13; unsigned int switch13;
+unsigned long duration14; unsigned int distance14; unsigned int switch14;
+unsigned long duration15; unsigned int distance15; unsigned int switch15;
+
+void sendTrigger (int trigPin) {
+  // Clears the trigPin condition
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  // Sets the trigPin HIGH (ACTIVE) for 10 microseconds (pulse)
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+}
+
+void setAllPixels (Adafruit_NeoPixel& pixels, int numPixels, int rValue, int gValue, int bValue, int delayVal) {
+  for (int i = 0; i < numPixels; i++) {
+    pixels.setPixelColor(i, pixels.Color(rValue, gValue, bValue));
+    pixels.show();
+    delay(delayVal);
+  }
+}
+
+void setAllPixelsWhite (Adafruit_NeoPixel& pixels, int numPixels, int delayVal) {
+  setAllPixels(pixels, numPixels, 255, 255, 255, delayVal);
+}
+
+void turnOffAllPixels (Adafruit_NeoPixel& pixels, int numPixels, int delayVal) {
+  setAllPixels (pixels, numPixels, 0, 0, 0, delayVal);
+}
 
 void setup() {
   // ===== Initializes the Adafruit Neopixels library =====
@@ -92,6 +133,9 @@ void setup() {
   pixels10.begin();
   pixels11.begin();
   pixels12.begin();
+  pixels13.begin();
+  pixels14.begin();
+  pixels15.begin();
 
   // ===== LED logic pins =====
   pinMode(PIN01, OUTPUT);
@@ -106,6 +150,9 @@ void setup() {
   pinMode(PIN10, OUTPUT);
   pinMode(PIN11, OUTPUT);
   pinMode(PIN12, OUTPUT);
+  pinMode(PIN13, OUTPUT);
+  pinMode(PIN14, OUTPUT);
+  pinMode(PIN15, OUTPUT);
 
   // ========== Sets trigPin as OUTPUT and echoPin as INPUT ==========
   pinMode(trigPin01, OUTPUT); pinMode(echoPin01, INPUT);
@@ -120,6 +167,9 @@ void setup() {
   pinMode(trigPin10, OUTPUT); pinMode(echoPin10, INPUT);
   pinMode(trigPin11, OUTPUT); pinMode(echoPin11, INPUT);
   pinMode(trigPin12, OUTPUT); pinMode(echoPin12, INPUT);
+  pinMode(trigPin13, OUTPUT); pinMode(echoPin13, INPUT);
+  pinMode(trigPin14, OUTPUT); pinMode(echoPin14, INPUT);
+  pinMode(trigPin15, OUTPUT); pinMode(echoPin15, INPUT);
   pinMode(logicWrite, OUTPUT); pinMode(logicRead, INPUT);
 
   Serial.begin(115200);
@@ -147,6 +197,7 @@ void loop() {
   // Serial.print("Distance: ");
   // Serial.println(distance1);
   // Serial.println(" cm");
+  switch02 = distance02 >= 30;
 
   sendTrigger(trigPin03);
   // Reads the echoPin, returns the sound wave travel time in microseconds
@@ -207,6 +258,40 @@ void loop() {
   duration12 = pulseIn(echoPin12, HIGH);
   // Calculating the distance
   distance12 = duration12 * 0.017; // Speed of sound wave divided by 2 (go and back)
+
+  sendTrigger(trigPin13);
+  // Reads the echoPin, returns the sound wave travel time in microseconds
+  duration13 = pulseIn(echoPin13, HIGH);
+  // Calculating the distance
+  distance13 = duration13 * 0.017; // Speed of sound wave divided by 2 (go and back)
+
+  sendTrigger(trigPin14);
+  // Reads the echoPin, returns the sound wave travel time in microseconds
+  duration14 = pulseIn(echoPin14, HIGH);
+  // Calculating the distance
+  distance14 = duration14 * 0.017; // Speed of sound wave divided by 2 (go and back)
+
+  sendTrigger(trigPin15);
+  // Reads the echoPin, returns the sound wave travel time in microseconds
+  duration15 = pulseIn(echoPin15, HIGH);
+  // Calculating the distance
+  distance15 = duration15 * 0.017; // Speed of sound wave divided by 2 (go and back)
+
+  switch01 = (distance01 < 30);
+  switch02 = (distance02 < 30);
+  switch03 = (distance03 < 30);
+  switch04 = (distance04 < 30);
+  switch05 = (distance05 < 30);
+  switch06 = (distance06 < 30);
+  switch07 = (distance07 < 30);
+  switch08 = (distance08 < 30);
+  switch09 = (distance09 < 30);
+  switch10 = (distance10 < 30);
+  switch11 = (distance11 < 30);
+  switch12 = (distance12 < 30);
+  switch13 = (distance13 < 30);
+  switch14 = (distance14 < 30);
+  switch15 = (distance15 < 30);
   
   // Displays the distance on the Serial Monitor
   // Serial.print("Distance: ");
@@ -219,7 +304,7 @@ void loop() {
   
   // Serial.println(" cm");
   
-  if (distance01 + distance02 + distance03 + distance04 + distance05 + distance06 + distance07 + distance08 + distance09 + distance10 + distance11 + distance12 < 30 * 12) {
+  if (switch01 || switch02 || switch03 || switch04 || switch05 || switch06 || switch07 || switch08 || switch09 || switch10 || switch11 || switch12 || switch13 || switch14 || switch15) {
     digitalWrite(logicWrite, HIGH);
     timer = 0;
   } else {
@@ -227,125 +312,123 @@ void loop() {
     timer++;
   }
 
-  if (distance12 < 30) {{
+  if (switch15) {
+    setAllPixels(pixels15, NUMPIXELS, 95, 239, 10, delayval);
+  } else if (digitalRead(logicRead)) {
+    setAllPixelsWhite(pixels15, NUMPIXELS, delayval);
+  } else if (timer > 100) {
+    turnOffAllPixels(pixels15, NUMPIXELS, delayval);
+  }
+
+  if (switch14) {
+    setAllPixels(pixels14, NUMPIXELS, 95, 239, 10, delayval);
+  } else if (digitalRead(logicRead)) {
+    setAllPixelsWhite(pixels14, NUMPIXELS, delayval);
+  } else if (timer > 100) {
+    turnOffAllPixels(pixels14, NUMPIXELS, delayval);
+  }
+
+  if (switch13) {
+    setAllPixels(pixels13, NUMPIXELS, 95, 239, 10, delayval);
+  } else if (digitalRead(logicRead)) {
+    setAllPixelsWhite(pixels13, NUMPIXELS, delayval);
+  } else if (timer > 100) {
+    turnOffAllPixels(pixels13, NUMPIXELS, delayval);
+  }
+
+  if (switch12) {
     setAllPixels(pixels12, NUMPIXELS, 95, 239, 10, delayval);
-  }} else if (digitalRead(logicRead)) {{
+  } else if (digitalRead(logicRead)) {
     setAllPixelsWhite(pixels12, NUMPIXELS, delayval);
-  }} else if (timer > 100) {{
-    turnOffAllPixels(pixels12, NUMPIXELS, delayval)
-  }};
+  } else if (timer > 100) {
+    turnOffAllPixels(pixels12, NUMPIXELS, delayval);
+  }
 
-  if (distance11 < 30) {{
+  if (switch11) {
     setAllPixels(pixels11, NUMPIXELS, 130, 249, 0, delayval);
-  }} else if (digitalRead(logicRead)) {{
+  } else if (digitalRead(logicRead)) {
     setAllPixelsWhite(pixels11, NUMPIXELS, delayval);
-  }} else if (timer > 100) {{
-    turnOffAllPixels(pixels11, NUMPIXELS, delayval)
-  }};
+  } else if (timer > 100) {
+    turnOffAllPixels(pixels11, NUMPIXELS, delayval);
+  }
 
-  if (distance10 < 30) {{
+  if (switch10) {
     setAllPixels(pixels10, NUMPIXELS, 195, 243, 0, delayval);
-  }} else if (digitalRead(logicRead)) {{
+  } else if (digitalRead(logicRead)) {
     setAllPixelsWhite(pixels10, NUMPIXELS, delayval);
-  }} else if (timer > 100) {{
-    turnOffAllPixels(pixels10, NUMPIXELS, delayval)
-  }};
+  } else if (timer > 100) {
+    turnOffAllPixels(pixels10, NUMPIXELS, delayval);
+  }
 
-  if (distance09 < 30) {{
+  if (switch09) {
     setAllPixels(pixels09, NUMPIXELS, 250, 234, 5, delayval);
-  }} else if (digitalRead(logicRead)) {{
+  } else if (digitalRead(logicRead)) {
     setAllPixelsWhite(pixels09, NUMPIXELS, delayval);
-  }} else if (timer > 100) {{
-    turnOffAllPixels(pixels09, NUMPIXELS, delayval)
-  }};
+  } else if (timer > 100) {
+    turnOffAllPixels(pixels09, NUMPIXELS, delayval);
+  }
 
-  if (distance08 < 30) {{
+  if (switch08) {
     setAllPixels(pixels08, NUMPIXELS, 190, 115, 0, delayval);
-  }} else if (digitalRead(logicRead)) {{
+  } else if (digitalRead(logicRead)) {
     setAllPixelsWhite(pixels08, NUMPIXELS, delayval);
-  }} else if (timer > 100) {{
-    turnOffAllPixels(pixels08, NUMPIXELS, delayval)
-  }};
+  } else if (timer > 100) {
+    turnOffAllPixels(pixels08, NUMPIXELS, delayval);
+  }
 
-  if (distance07 < 30) {{
+  if (switch07) {
     setAllPixels(pixels07, NUMPIXELS, 255, 70, 0, delayval);
-  }} else if (digitalRead(logicRead)) {{
+  } else if (digitalRead(logicRead)) {
     setAllPixelsWhite(pixels07, NUMPIXELS, delayval);
-  }} else if (timer > 100) {{
-    turnOffAllPixels(pixels07, NUMPIXELS, delayval)
-  }};
+  } else if (timer > 100) {
+    turnOffAllPixels(pixels07, NUMPIXELS, delayval);
+  }
 
-  if (distance06 < 30) {{
+  if (switch06) {
     setAllPixels(pixels06, NUMPIXELS, 255, 0, 40, delayval);
-  }} else if (digitalRead(logicRead)) {{
+  } else if (digitalRead(logicRead)) {
     setAllPixelsWhite(pixels06, NUMPIXELS, delayval);
-  }} else if (timer > 100) {{
-    turnOffAllPixels(pixels06, NUMPIXELS, delayval)
-  }};
+  } else if (timer > 100) {
+    turnOffAllPixels(pixels06, NUMPIXELS, delayval);
+  }
 
-  if (distance05 < 30) {
+  if (switch05) {
     setAllPixels(pixels05, NUMPIXELS, 180, 0, 57, delayval);
   } else if (digitalRead(logicRead)) {
     setAllPixelsWhite(pixels05, NUMPIXELS, delayval);
   } else if (timer > 100) {
-    turnOffAllPixels(pixels05, NUMPIXELS, delayval)
-  };
+    turnOffAllPixels(pixels05, NUMPIXELS, delayval);
+  }
 
-  if (distance04 < 30) {
+  if (switch04) {
     setAllPixels(pixels04, NUMPIXELS, 95, 50, 220, delayval);
   } else if (digitalRead(logicRead)) {
     setAllPixelsWhite(pixels04, NUMPIXELS, delayval);
   } else if (timer > 100) {
-    turnOffAllPixels(pixels04, NUMPIXELS, delayval)
-  };
+    turnOffAllPixels(pixels04, NUMPIXELS, delayval);
+  }
 
-  if (distance03 < 30) {
+  if (switch03) {
     setAllPixels(pixels03, NUMPIXELS, 95, 0, 255, delayval);
   } else if (digitalRead(logicRead)) {
     setAllPixelsWhite(pixels03, NUMPIXELS, delayval);
   } else if (timer > 100) {
-    turnOffAllPixels(pixels03, NUMPIXELS, delayval)
-  };
+    turnOffAllPixels(pixels03, NUMPIXELS, delayval);
+  }
   
-  if (distance02 < 30) {
+  if (switch02) {
     setAllPixels(pixels02, NUMPIXELS, 70, 92, 150, delayval);
   } else if (digitalRead(logicRead)) {
     setAllPixelsWhite(pixels02, NUMPIXELS, delayval);
   } else if (timer > 100) {
-    turnOffAllPixels(pixels02, NUMPIXELS, delayval)
-  };
-
-  if (distance01 < 30) {
+    turnOffAllPixels(pixels02, NUMPIXELS, delayval);
+  }
+  
+  if (switch01) {
     setAllPixels(pixels01, NUMPIXELS, 30, 50, 235, delayval);
   } else if (digitalRead(logicRead)) {
     setAllPixelsWhite(pixels01, NUMPIXELS, delayval);
   } else if (timer > 100) {
-    turnOffAllPixels(pixels01, NUMPIXELS, delayval)
-  };
-}
-  
-void sendTrigger (int trigPin) {
-  // Clears the trigPin condition
-  digitalWrite(trigPin, LOW);
-  delayMicroseconds(2);
-  // Sets the trigPin HIGH (ACTIVE) for 10 microseconds (pulse)
-  digitalWrite(trigPin, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin, LOW);
-}
-
-void setAllPixels (Adafruit_NeoPixel pixels, int numPixels, int rValue, int gValue, int bValue, int delayVal) {
-  for (int = 0; i < numPixels; i++) {
-    pixels.setPixelColor(i, pixels.Color(rValue, gValue, bValue));
-    pixels.show();
-    delay(delayVal);
+    turnOffAllPixels(pixels01, NUMPIXELS, delayval);
   }
-}
-
-void setAllPixelsWhite (Adafruit_NeoPixel pixels, int numPixels, int delayVal) {
-  setAllPixels(pixels, numPixels, 255, 255, 255, delayVal);
-}
-
-void turnOffAllPixels (Adafruit_NeoPixel pixels, int numPixels, int delayVal) {
-  setAllPixels (pixels, numPixels, 0, 0, 0, delayVal);
 }
