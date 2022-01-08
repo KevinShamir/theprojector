@@ -1,1253 +1,433 @@
 #include <Adafruit_NeoPixel.h>
 
-#define PIN 9   // input pin Neopixel is attached to
-#define PIN1 6  // input pin Neopixel1 is attached to
-#define PIN2 5
-#define PIN3 2
-#define PIN4 16
-#define PIN5 19
-#define PIN6 22
-#define PIN7 25
-#define PIN8 28
-#define PIN9 31
+#define PIN01 2
+#define PIN02 5
+#define PIN03 8
+#define PIN04 A0
+#define PIN05 19
+#define PIN06 17
+#define PIN07 A2
+#define PIN08 28
+#define PIN09 33
 #define PIN10 34
-#define PIN11 37
+#define PIN11 39
 #define PIN12 40
-#define PIN13 43
+#define PIN13 45
 #define PIN14 46
+#define PIN15 51
 
-#define NUMPIXELS      20 // number of neopixels in Ring
-#define NUMPIXELS1 20 //number of pixels in 2nd ring
-#define logicWrite 13 //pin for writing logic
-#define logicRead 12//pin for reading logic
+#define NUMPIXELS 20 // Number of NeoPixels in strand.
 
+Adafruit_NeoPixel pixels01 = Adafruit_NeoPixel(NUMPIXELS, PIN01, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel pixels02 = Adafruit_NeoPixel(NUMPIXELS, PIN02, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel pixels03 = Adafruit_NeoPixel(NUMPIXELS, PIN03, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel pixels04 = Adafruit_NeoPixel(NUMPIXELS, PIN04, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel pixels05 = Adafruit_NeoPixel(NUMPIXELS, PIN05, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel pixels06 = Adafruit_NeoPixel(NUMPIXELS, PIN06, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel pixels07 = Adafruit_NeoPixel(NUMPIXELS, PIN07, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel pixels08 = Adafruit_NeoPixel(NUMPIXELS, PIN08, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel pixels09 = Adafruit_NeoPixel(NUMPIXELS, PIN09, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel pixels10 = Adafruit_NeoPixel(NUMPIXELS, PIN10, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel pixels11 = Adafruit_NeoPixel(NUMPIXELS, PIN11, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel pixels12 = Adafruit_NeoPixel(NUMPIXELS, PIN12, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel pixels13 = Adafruit_NeoPixel(NUMPIXELS, PIN13, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel pixels14 = Adafruit_NeoPixel(NUMPIXELS, PIN14, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel pixels15 = Adafruit_NeoPixel(NUMPIXELS, PIN15, NEO_GRB + NEO_KHZ800);
 
-Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
-Adafruit_NeoPixel pixels1 = Adafruit_NeoPixel(NUMPIXELS1, PIN1, NEO_GRB + NEO_KHZ800);
-Adafruit_NeoPixel pixels2 = Adafruit_NeoPixel(NUMPIXELS1, PIN2, NEO_GRB + NEO_KHZ800);
-Adafruit_NeoPixel pixels3 = Adafruit_NeoPixel(NUMPIXELS1, PIN3, NEO_GRB + NEO_KHZ800);
-Adafruit_NeoPixel pixels4 = Adafruit_NeoPixel(NUMPIXELS1, PIN4, NEO_GRB + NEO_KHZ800);
-Adafruit_NeoPixel pixels5 = Adafruit_NeoPixel(NUMPIXELS1, PIN5, NEO_GRB + NEO_KHZ800);
-Adafruit_NeoPixel pixels6 = Adafruit_NeoPixel(NUMPIXELS1, PIN6, NEO_GRB + NEO_KHZ800);
-Adafruit_NeoPixel pixels7 = Adafruit_NeoPixel(NUMPIXELS1, PIN7, NEO_GRB + NEO_KHZ800);
-Adafruit_NeoPixel pixels8 = Adafruit_NeoPixel(NUMPIXELS1, PIN8, NEO_GRB + NEO_KHZ800);
-Adafruit_NeoPixel pixels9 = Adafruit_NeoPixel(NUMPIXELS1, PIN9, NEO_GRB + NEO_KHZ800);
-Adafruit_NeoPixel pixels10 = Adafruit_NeoPixel(NUMPIXELS1, PIN10, NEO_GRB + NEO_KHZ800);
-Adafruit_NeoPixel pixels11 = Adafruit_NeoPixel(NUMPIXELS1, PIN11, NEO_GRB + NEO_KHZ800);
-Adafruit_NeoPixel pixels12 = Adafruit_NeoPixel(NUMPIXELS1, PIN12, NEO_GRB + NEO_KHZ800);
-Adafruit_NeoPixel pixels13 = Adafruit_NeoPixel(NUMPIXELS1, PIN13, NEO_GRB + NEO_KHZ800);
-Adafruit_NeoPixel pixels14 = Adafruit_NeoPixel(NUMPIXELS1, PIN14, NEO_GRB + NEO_KHZ800);
+unsigned int timer = 0; // Time with no human on steps
 
-
-int timer=0; //timing of no human on steps
-
+unsigned int presence=0; //Logic on whether anyone is on the steps
 
 int delayval = 1; // timing delay
-int delayval1=1; //timing1 delay
+int delayval1 = 1; // timing1 delay
 
 int redColor = 0;
 int greenColor = 0;
 int blueColor = 0;
-#define echoPin 11 // attach pin D2 Arduino to pin Echo of HC-SR04
-#define trigPin 10 //attach pin D3 Arduino to pin Trig of HC-SR04
-#define echoPin1 8
-#define trigPin1 7
-#define echoPin2 3
-#define trigPin2 4
-#define echoPin3 15
-#define trigPin3 14
-#define echoPin4 17
-#define trigPin4 18
-#define echoPin5 20
-#define trigPin5 21
-#define echoPin6 23
-#define trigPin6 24
-#define echoPin7 26
-#define trigPin7 27
-#define echoPin8 29
-#define trigPin8 30
-#define echoPin9 32
-#define trigPin9 33
-#define echoPin10 35
+
+#define echoPin01 3
+#define trigPin01 4
+#define echoPin02 6
+#define trigPin02 7
+#define echoPin03 9
+#define trigPin03 10
+#define echoPin04 12
+#define trigPin04 13
+#define echoPin05 22 //solder
+#define trigPin05 23 //solder
+#define echoPin06 24 //solder
+#define trigPin06 25//solder
+#define echoPin07 21 
+#define trigPin07 29
+#define echoPin08 31
+#define trigPin08 30
+#define echoPin09 32
+#define trigPin09 35
+#define echoPin10 37
 #define trigPin10 36
 #define echoPin11 38
-#define trigPin11 39
-#define echoPin12 41
+#define trigPin11 41
+#define echoPin12 43
 #define trigPin12 42
-#define echoPin13 45
-#define trigPin13 44
-#define echoPin14 48
-#define trigPin14 47
+#define echoPin13 52
+#define trigPin13 47
+#define echoPin14 49
+#define trigPin14 48
+#define echoPin15 50
+#define trigPin15 53
 
+unsigned long duration01; unsigned int distance01; unsigned int switch01;
+unsigned long duration02; unsigned int distance02; unsigned int switch02;
+unsigned long duration03; unsigned int distance03; unsigned int switch03;
+unsigned long duration04; unsigned int distance04; unsigned int switch04;
+unsigned long duration05; unsigned int distance05; unsigned int switch05;
+unsigned long duration06; unsigned int distance06; unsigned int switch06;
+unsigned long duration07; unsigned int distance07; unsigned int switch07;
+unsigned long duration08; unsigned int distance08; unsigned int switch08;
+unsigned long duration09; unsigned int distance09; unsigned int switch09;
+unsigned long duration10; unsigned int distance10; unsigned int switch10;
+unsigned long duration11; unsigned int distance11; unsigned int switch11;
+unsigned long duration12; unsigned int distance12; unsigned int switch12;
+unsigned long duration13; unsigned int distance13; unsigned int switch13;
+unsigned long duration14; unsigned int distance14; unsigned int switch14;
+unsigned long duration15; unsigned int distance15; unsigned int switch15;
 
-// defines variables
-long duration; // variable for the duration of sound wave travel
-int distance; // variable for the distance measurement
-long duration1; // variable for the duration of sound wave travel
-int distance1; // variable for the distance measurement
-long duration2; // variable for the duration of sound wave travel
-int distance2; // variable for the distance measurement
-long duration3; // variable for the duration of sound wave travel
-int distance3; // variable for the distance measurement
-long duration4; // variable for the duration of sound wave travel
-int distance4; // variable for the distance measurement
-long duration5; // variable for the duration of sound wave travel
-int distance5; // variable for the distance measurement
-long duration6; // variable for the duration of sound wave travel
-int distance6; // variable for the distance measurement
-long duration7; // variable for the duration of sound wave travel
-int distance7; // variable for the distance measurement
-long duration8; // variable for the duration of sound wave travel
-int distance8; // variable for the distance measurement
-long duration9; // variable for the duration of sound wave travel
-int distance9; // variable for the distance measurement
-long duration10; // variable for the duration of sound wave travel
-int distance10; // variable for the distance measurement
-long duration11; // variable for the duration of sound wave travel
-int distance11; // variable for the distance measurement
-long duration12; // variable for the duration of sound wave travel
-int distance12; // variable for the distance measurement
-long duration13; // variable for the duration of sound wave travel
-int distance13; // variable for the distance measurement
-long duration14; // variable for the duration of sound wave travel
-int distance14; // variable for the distance measurement
+void sendTrigger (int trigPin) {
+  // Clears the trigPin condition
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  // Sets the trigPin HIGH (ACTIVE) for 10 microseconds (pulse)
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+}
 
+void setAllPixels (Adafruit_NeoPixel& pixels, int numPixels, int rValue, int gValue, int bValue, int delayVal) {
+  for (int i = 0; i < numPixels; i++) {
+    pixels.setPixelColor(i, pixels.Color(gValue, rValue, bValue));
+    pixels.show();
+    delay(delayVal);
+  }
+}
+
+void setAllPixelsWhite (Adafruit_NeoPixel& pixels, int numPixels, int delayVal) {
+  setAllPixels(pixels, numPixels, 255, 255, 255, delayVal);
+}
+
+void turnOffAllPixels (Adafruit_NeoPixel& pixels, int numPixels, int delayVal) {
+  setAllPixels (pixels, numPixels, 0, 0, 0, delayVal);
+}
 
 void setup() {
-  pixels.begin(); // Initializes the NeoPixel library.
-  pixels1.begin();// Initializes the NeoPixel Library
-  pixels2.begin();// Initializes the NeoPixel Library
-  pixels3.begin();// Initializes the NeoPixel Library
-  pixels4.begin();// Initializes the NeoPixel Library
-  pixels5.begin();// Initializes the NeoPixel Library
-  pixels6.begin();// Initializes the NeoPixel Library
-  pixels7.begin();// Initializes the NeoPixel Library
-  pixels8.begin();// Initializes the NeoPixel Library
-  pixels9.begin();// Initializes the NeoPixel Library
-  pixels10.begin();// Initializes the NeoPixel Library
-  pixels11.begin();// Initializes the NeoPixel Library
-  pixels12.begin();// Initializes the NeoPixel Library
-  pixels13.begin();// Initializes the NeoPixel Library
-  pixels14.begin();// Initializes the NeoPixel Library
-  pinMode(PIN,OUTPUT);//led logic pin
-  pinMode(PIN1,OUTPUT);//led logic pin
-  pinMode(PIN2,OUTPUT);//led logic pin
-  pinMode(PIN3,OUTPUT);//led logic pin
-  pinMode(PIN4,OUTPUT);//led logic pin
-  pinMode(PIN5,OUTPUT);//led logic pin
-  pinMode(PIN6,OUTPUT);//led logic pin
-  pinMode(PIN7,OUTPUT);//led logic pin
-  pinMode(PIN8,OUTPUT);//led logic pin
-  pinMode(PIN9,OUTPUT);//led logic pin
-  pinMode(PIN10,OUTPUT);//led logic pin
-  pinMode(PIN11,OUTPUT);//led logic pin
-  pinMode(PIN12,OUTPUT);//led logic pin
-  pinMode(PIN13,OUTPUT);//led logic pin
-  pinMode(PIN14,OUTPUT);//led logic pin
-  pinMode(trigPin, OUTPUT); // Sets the trigPin as an OUTPUT
-  pinMode(echoPin, INPUT); // Sets the echoPin as an INPUT
-  pinMode(trigPin1,OUTPUT); // Sets the trigPin as an OUTPUT
-  pinMode(echoPin1,INPUT); // Sets the echoPin as an INPUT
-  pinMode(trigPin2,OUTPUT); // Sets the trigPin as an OUTPUT
-  pinMode(echoPin2,INPUT); // Sets the echoPin as an INPUT
-  pinMode(trigPin3,OUTPUT); // Sets the trigPin as an OUTPUT
-  pinMode(echoPin3,INPUT); // Sets the echoPin as an INPUT
-  pinMode(trigPin4,OUTPUT); // Sets the trigPin as an OUTPUT
-  pinMode(echoPin4,INPUT); // Sets the echoPin as an INPUT
-  pinMode(trigPin5,OUTPUT); // Sets the trigPin as an OUTPUT
-  pinMode(echoPin5,INPUT); // Sets the echoPin as an INPUT
-  pinMode(trigPin6,OUTPUT); // Sets the trigPin as an OUTPUT
-  pinMode(echoPin6,INPUT); // Sets the echoPin as an INPUT
-  pinMode(trigPin7,OUTPUT); // Sets the trigPin as an OUTPUT
-  pinMode(echoPin7,INPUT); // Sets the echoPin as an INPUT
-  pinMode(trigPin8,OUTPUT); // Sets the trigPin as an OUTPUT
-  pinMode(echoPin8,INPUT); // Sets the echoPin as an INPUT
-  pinMode(trigPin9,OUTPUT); // Sets the trigPin as an OUTPUT
-  pinMode(echoPin9,INPUT); // Sets the echoPin as an INPUT
-  pinMode(trigPin10,OUTPUT); // Sets the trigPin as an OUTPUT
-  pinMode(echoPin10,INPUT); // Sets the echoPin as an INPUT
-  pinMode(trigPin11,OUTPUT); // Sets the trigPin as an OUTPUT
-  pinMode(echoPin11,INPUT); // Sets the echoPin as an INPUT
-  pinMode(trigPin12,OUTPUT); // Sets the trigPin as an OUTPUT
-  pinMode(echoPin12,INPUT); // Sets the echoPin as an INPUT
-  pinMode(trigPin13,OUTPUT); // Sets the trigPin as an OUTPUT
-  pinMode(echoPin13,INPUT); // Sets the echoPin as an INPUT
-  pinMode(trigPin14,OUTPUT); // Sets the trigPin as an OUTPUT
-  pinMode(echoPin14,INPUT); // Sets the echoPin as an INPUT
-  pinMode(logicWrite,OUTPUT);//writing logic as an OUPUT
-  pinMode(logicRead,INPUT); //reading logic as an Input
+  // ===== Initializes the Adafruit Neopixels library =====
+  pixels01.begin();
+  pixels02.begin();
+  pixels03.begin();
+  pixels04.begin();
+  pixels05.begin();
+  pixels06.begin();
+  pixels07.begin();
+  pixels08.begin();
+  pixels09.begin();
+  pixels10.begin();
+  pixels11.begin();
+  pixels12.begin();
+  pixels13.begin();
+  pixels14.begin();
+  pixels15.begin();
+
+  // ===== LED logic pins =====
+  pinMode(PIN01, OUTPUT);
+  pinMode(PIN02, OUTPUT);
+  pinMode(PIN03, OUTPUT);
+  pinMode(PIN04, OUTPUT);
+  pinMode(PIN05, OUTPUT);
+  pinMode(PIN06, OUTPUT);
+  pinMode(PIN07, OUTPUT);
+  pinMode(PIN08, OUTPUT);
+  pinMode(PIN09, OUTPUT);
+  pinMode(PIN10, OUTPUT);
+  pinMode(PIN11, OUTPUT);
+  pinMode(PIN12, OUTPUT);
+  pinMode(PIN13, OUTPUT);
+  pinMode(PIN14, OUTPUT);
+  pinMode(PIN15, OUTPUT);
+
+  // ========== Sets trigPin as OUTPUT and echoPin as INPUT ==========
+  pinMode(trigPin01, OUTPUT); pinMode(echoPin01, INPUT);
+  pinMode(trigPin02, OUTPUT); pinMode(echoPin02, INPUT);
+  pinMode(trigPin03, OUTPUT); pinMode(echoPin03, INPUT);
+  pinMode(trigPin04, OUTPUT); pinMode(echoPin04, INPUT);
+  pinMode(trigPin05, OUTPUT); pinMode(echoPin05, INPUT);
+  pinMode(trigPin06, OUTPUT); pinMode(echoPin06, INPUT);
+  pinMode(trigPin07, OUTPUT); pinMode(echoPin07, INPUT);
+  pinMode(trigPin08, OUTPUT); pinMode(echoPin08, INPUT);
+  pinMode(trigPin09, OUTPUT); pinMode(echoPin09, INPUT);
+  pinMode(trigPin10, OUTPUT); pinMode(echoPin10, INPUT);
+  pinMode(trigPin11, OUTPUT); pinMode(echoPin11, INPUT);
+  pinMode(trigPin12, OUTPUT); pinMode(echoPin12, INPUT);
+  pinMode(trigPin13, OUTPUT); pinMode(echoPin13, INPUT);
+  pinMode(trigPin14, OUTPUT); pinMode(echoPin14, INPUT);
+  pinMode(trigPin15, OUTPUT); pinMode(echoPin15, INPUT);
+
   Serial.begin(115200);
 }
 
 void loop() {
-  //Serial.println(digitalRead(logicRead));
-  // Clears the trigPin condition
-  digitalWrite(trigPin, LOW);
-  delayMicroseconds(2);
-  // Sets the trigPin HIGH (ACTIVE) for 10 microseconds
-  digitalWrite(trigPin, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin, LOW);
+  // Serial.println(digitalRead(logicRead));
+
+  sendTrigger(trigPin01);
   // Reads the echoPin, returns the sound wave travel time in microseconds
-  duration = pulseIn(echoPin, HIGH);
+  duration01 = pulseIn(echoPin01, HIGH);
   // Calculating the distance
-  distance = duration * 0.017 ; // Speed of sound wave divided by 2 (go and back)
+  distance01 = duration01 * 0.017; // Speed of sound wave divided by 2 (go and back)
   // Displays the distance on the Serial Monitor
-  //Serial.print("Distance: ");
-  //Serial.println(distance);
-  //Serial.println(" cm");
+  // Serial.print("Distance: ");
+   //Serial.println(distance01);
+  // Serial.println(" cm");
 
-  digitalWrite(trigPin1, LOW);
-  delayMicroseconds(2);
-  // Sets the trigPin HIGH (ACTIVE) for 10 microseconds
-  digitalWrite(trigPin1, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin1, LOW);
+  sendTrigger(trigPin02);
   // Reads the echoPin, returns the sound wave travel time in microseconds
-  duration1 = pulseIn(echoPin1, HIGH);
+  duration02 = pulseIn(echoPin02, HIGH);
   // Calculating the distance
-  distance1 = duration1 * 0.034 / 2; // Speed of sound wave divided by 2 (go and back)
+  distance02 = duration02 * 0.017; // Speed of sound wave divided by 2 (go and back)
   // Displays the distance on the Serial Monitor
-  //Serial.print("Distance: ");
-  //Serial.println(distance1);
-  //Serial.println(" cm");
+  // Serial.print("Distance: ");
+  // Serial.println(distance02);
+  // Serial.println(" cm");
+  //switch02 = distance02 >= 30;
 
-  digitalWrite(trigPin2, LOW);
-  delayMicroseconds(2);
-  // Sets the trigPin HIGH (ACTIVE) for 10 microseconds
-  digitalWrite(trigPin2, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin2, LOW);
+  sendTrigger(trigPin03);
   // Reads the echoPin, returns the sound wave travel time in microseconds
-  duration2 = pulseIn(echoPin2, HIGH);
+  duration03 = pulseIn(echoPin03, HIGH);
   // Calculating the distance
-  distance2 = duration2 * 0.017; // Speed of sound wave divided by 2 (go and back)
+  distance03 = duration03 * 0.017; // Speed of sound wave divided by 2 (go and back)
 
-  digitalWrite(trigPin3, LOW);
-  delayMicroseconds(2);
-  // Sets the trigPin HIGH (ACTIVE) for 10 microseconds
-  digitalWrite(trigPin3, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin3, LOW);
+  sendTrigger(trigPin04);
   // Reads the echoPin, returns the sound wave travel time in microseconds
-  duration3 = pulseIn(echoPin3, HIGH);
+  duration04 = pulseIn(echoPin04, HIGH);
   // Calculating the distance
-  distance3 = duration3 * 0.017; // Speed of sound wave divided by 2 (go and back)
+  distance04 = duration04 * 0.017; // Speed of sound wave divided by 2 (go and back)
 
-  digitalWrite(trigPin4, LOW);
-  delayMicroseconds(2);
-  // Sets the trigPin HIGH (ACTIVE) for 10 microseconds
-  digitalWrite(trigPin4, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin4, LOW);
+  sendTrigger(trigPin05);
   // Reads the echoPin, returns the sound wave travel time in microseconds
-  duration4 = pulseIn(echoPin4, HIGH);
+  duration05 = pulseIn(echoPin05, HIGH);
   // Calculating the distance
-  distance4 = duration4 * 0.017; // Speed of sound wave divided by 2 (go and back)
+  distance05 = duration05 * 0.017; // Speed of sound wave divided by 2 (go and back)
 
-  digitalWrite(trigPin5, LOW);
-  delayMicroseconds(2);
-  // Sets the trigPin HIGH (ACTIVE) for 10 microseconds
-  digitalWrite(trigPin5, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin5, LOW);
+  sendTrigger(trigPin06);
   // Reads the echoPin, returns the sound wave travel time in microseconds
-  duration5 = pulseIn(echoPin5, HIGH);
+  duration06 = pulseIn(echoPin06, HIGH);
   // Calculating the distance
-  distance5 = duration5 * 0.017; // Speed of sound wave divided by 2 (go and back)
+  distance06 = duration06 * 0.017; // Speed of sound wave divided by 2 (go and back)
 
-
-  digitalWrite(trigPin6, LOW);
-  delayMicroseconds(2);
-  // Sets the trigPin HIGH (ACTIVE) for 10 microseconds
-  digitalWrite(trigPin6, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin6, LOW);
+  sendTrigger(trigPin07);
   // Reads the echoPin, returns the sound wave travel time in microseconds
-  duration6 = pulseIn(echoPin6, HIGH);
+  duration07 = pulseIn(echoPin07, HIGH);
   // Calculating the distance
-  distance6 = duration6 * 0.017; // Speed of sound wave divided by 2 (go and back)
+  distance07 = duration07 * 0.017; // Speed of sound wave divided by 2 (go and back)
 
-
-
-
-
-  digitalWrite(trigPin7, LOW);
-  delayMicroseconds(2);
-  // Sets the trigPin HIGH (ACTIVE) for 10 microseconds
-  digitalWrite(trigPin7, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin7, LOW);
+  sendTrigger(trigPin08);
   // Reads the echoPin, returns the sound wave travel time in microseconds
-  duration7 = pulseIn(echoPin7, HIGH);
+  duration08 = pulseIn(echoPin08, HIGH);
   // Calculating the distance
-  distance7 = duration7 * 0.017; // Speed of sound wave divided by 2 (go and back)
+  distance08 = duration08 * 0.017; // Speed of sound wave divided by 2 (go and back)
 
-
-  digitalWrite(trigPin8, LOW);
-  delayMicroseconds(2);
-  // Sets the trigPin HIGH (ACTIVE) for 10 microseconds
-  digitalWrite(trigPin8, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin8, LOW);
+  sendTrigger(trigPin09);
   // Reads the echoPin, returns the sound wave travel time in microseconds
-  duration8 = pulseIn(echoPin8, HIGH);
+  duration09 = pulseIn(echoPin09, HIGH);
   // Calculating the distance
-  distance8 = duration8 * 0.017; // Speed of sound wave divided by 2 (go and back)
+  distance09 = duration09 * 0.017; // Speed of sound wave divided by 2 (go and back)
 
-
-  digitalWrite(trigPin9, LOW);
-  delayMicroseconds(2);
-  // Sets the trigPin HIGH (ACTIVE) for 10 microseconds
-  digitalWrite(trigPin9, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin9, LOW);
-  // Reads the echoPin, returns the sound wave travel time in microseconds
-  duration9 = pulseIn(echoPin9, HIGH);
-  // Calculating the distance
-  distance9 = duration9 * 0.017; // Speed of sound wave divided by 2 (go and back)
-
-  digitalWrite(trigPin10, LOW);
-  delayMicroseconds(2);
-  // Sets the trigPin HIGH (ACTIVE) for 10 microseconds
-  digitalWrite(trigPin10, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin10, LOW);
+  sendTrigger(trigPin10);
   // Reads the echoPin, returns the sound wave travel time in microseconds
   duration10 = pulseIn(echoPin10, HIGH);
   // Calculating the distance
   distance10 = duration10 * 0.017; // Speed of sound wave divided by 2 (go and back)
 
-  digitalWrite(trigPin11, LOW);
-  delayMicroseconds(2);
-  // Sets the trigPin HIGH (ACTIVE) for 10 microseconds
-  digitalWrite(trigPin11, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin11, LOW);
+  sendTrigger(trigPin11);
   // Reads the echoPin, returns the sound wave travel time in microseconds
   duration11 = pulseIn(echoPin11, HIGH);
   // Calculating the distance
   distance11 = duration11 * 0.017; // Speed of sound wave divided by 2 (go and back)
 
-  digitalWrite(trigPin12, LOW);
-  delayMicroseconds(2);
-  // Sets the trigPin HIGH (ACTIVE) for 10 microseconds
-  digitalWrite(trigPin12, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin12, LOW);
+  sendTrigger(trigPin12);
   // Reads the echoPin, returns the sound wave travel time in microseconds
   duration12 = pulseIn(echoPin12, HIGH);
   // Calculating the distance
   distance12 = duration12 * 0.017; // Speed of sound wave divided by 2 (go and back)
 
-
-  digitalWrite(trigPin13, LOW);
-  delayMicroseconds(2);
-  // Sets the trigPin HIGH (ACTIVE) for 10 microseconds
-  digitalWrite(trigPin13, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin13, LOW);
+  sendTrigger(trigPin13);
   // Reads the echoPin, returns the sound wave travel time in microseconds
   duration13 = pulseIn(echoPin13, HIGH);
   // Calculating the distance
   distance13 = duration13 * 0.017; // Speed of sound wave divided by 2 (go and back)
 
-  digitalWrite(trigPin14, LOW);
-  delayMicroseconds(2);
-  // Sets the trigPin HIGH (ACTIVE) for 10 microseconds
-  digitalWrite(trigPin14, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin14, LOW);
+  sendTrigger(trigPin14);
   // Reads the echoPin, returns the sound wave travel time in microseconds
   duration14 = pulseIn(echoPin14, HIGH);
   // Calculating the distance
   distance14 = duration14 * 0.017; // Speed of sound wave divided by 2 (go and back)
-  
 
+  sendTrigger(trigPin15);
+  // Reads the echoPin, returns the sound wave travel time in microseconds
+  duration15 = pulseIn(echoPin15, HIGH);
+  // Calculating the distance
+  distance15 = duration15 * 0.017; // Speed of sound wave divided by 2 (go and back)
 
+  switch01 = (distance01 < 30 and distance01 >0) ;
+  switch02 = (distance02 < 30 and distance02 >0);
+  switch03 = (distance03 < 30 and distance03 >0);
+  switch04 = (distance04 < 30 and distance04 >0);
+  switch05 = (distance05 < 30 and distance05 >0);
+  switch06 = (distance06 < 30 and distance06 >0);
+  switch07 = (distance07 < 30 and distance07 >0);
+  switch08 = (distance08 < 30 and distance08 >0);
+  switch09 = (distance09 < 30 and distance09 >0);
+  switch10 = (distance10 < 30 and distance10 >0);
+  switch11 = (distance11 < 30 and distance11 >0);
+  switch12 = (distance12 < 30 and distance12 >0);
+  switch13 = (distance13 < 30 and distance13 >0);
+  switch14 = (distance14 < 30 and distance14 >0);
+  switch15 = (distance15 < 30 and distance15 >0);
   
   // Displays the distance on the Serial Monitor
- // Serial.print("Distance: ");
-  //Serial.println(distance);
-  //Serial.println(distance1);
-  //Serial.println(distance2);
-  //Serial.println(distance3);
-  //Serial.println(distance4);
-  //Serial.println(distance10);
+  // Serial.print("Distance: ");
+  // Serial.println(distance);
+  // Serial.println(distance1);
+  // Serial.println(distance01);
+  // Serial.println(distance3);
+  // Serial.println(distance4);
+   Serial.println(distance06);
+    
   
-  //Serial.println(" cm");
-
-
+  // Serial.println(" cm");
   
-  if(distance<30 or distance1<30 or distance2 <30 or distance3<30 or distance4<30 or distance5<30 or distance6<30 or distance7<30 or distance8<30 or distance9<30 or distance10<30 or distance11<30 or distance12<30 or distance13<30 or distance14<30){
-    digitalWrite(logicWrite,HIGH);
-    timer=0;
-  }
-  else{
-    digitalWrite(logicWrite,LOW);
+  if (switch01 || switch02 || switch03 || switch04 || switch05 || switch06 || switch07 || switch08 || switch09 || switch10 || switch11 || switch12 || switch13 || switch14 || switch15) {
+    presence=1;
+    timer = 0;
+  } else {
+    presence=0;
     timer++;
   }
 
-
-if(distance14<30){ //human presence on stairs
-
-
-
-  for(int i=0;i<NUMPIXELS1;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels14.setPixelColor(i, pixels14.Color(25, 255, 0)); // blue color
-
-    pixels14.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval1); // Delay for a period of time (in milliseconds).
-    }
-      
-}
-
-  else if (digitalRead(logicRead)){
-  for(int i=0;i<NUMPIXELS1;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels14.setPixelColor(i, pixels14.Color(255,255,255));//Moderately white light color.
-
-    pixels14.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval1); // Delay for a period of time (in milliseconds).
-    
-    // Serial.println(i);  
-    } 
-
-
-    
+  if (switch15) {
+    setAllPixels(pixels15, NUMPIXELS, 255, 0, 0, delayval);
+  } else if (presence) {
+    setAllPixelsWhite(pixels15, NUMPIXELS, delayval);
+  } else if (timer > 100) {
+    turnOffAllPixels(pixels15, NUMPIXELS, delayval);
   }
 
+  if (switch14) {
+    setAllPixels(pixels14, NUMPIXELS, 255, 30, 0, delayval);
+  } else if (presence) {
+    setAllPixelsWhite(pixels14, NUMPIXELS, delayval);
+  } else if (timer > 100) {
+    turnOffAllPixels(pixels14, NUMPIXELS, delayval);
+  }
+
+  if (switch13) {
+    setAllPixels(pixels13, NUMPIXELS, 250, 70, 5, delayval);
+  } else if (presence) {
+    setAllPixelsWhite(pixels13, NUMPIXELS, delayval);
+  } else if (timer > 100) {
+    turnOffAllPixels(pixels13, NUMPIXELS, delayval);
+  }
+
+  if (switch12) {
+    setAllPixels(pixels12, NUMPIXELS, 239, 95, 10, delayval);
+  } else if (presence) {
+    setAllPixelsWhite(pixels12, NUMPIXELS, delayval);
+  } else if (timer > 100) {
+    turnOffAllPixels(pixels12, NUMPIXELS, delayval);
+  }
+
+  if (switch11) {
+    setAllPixels(pixels11, NUMPIXELS, 249, 130, 0, delayval);
+  } else if (presence) {
+    setAllPixelsWhite(pixels11, NUMPIXELS, delayval);
+  } else if (timer > 100) {
+    turnOffAllPixels(pixels11, NUMPIXELS, delayval);
+  }
+
+  if (switch10) {
+    setAllPixels(pixels10, NUMPIXELS, 243, 195, 0, delayval);
+  } else if (presence) {
+    setAllPixelsWhite(pixels10, NUMPIXELS, delayval);
+  } else if (timer > 100) {
+    turnOffAllPixels(pixels10, NUMPIXELS, delayval);
+  }
+
+  if (switch09) {
+    setAllPixels(pixels09, NUMPIXELS, 234, 250, 5, delayval);
+  } else if (presence) {
+    setAllPixelsWhite(pixels09, NUMPIXELS, delayval);
+  } else if (timer > 100) {
+    turnOffAllPixels(pixels09, NUMPIXELS, delayval);
+  }
+
+  if (switch08) {
+    setAllPixels(pixels08, NUMPIXELS, 115, 190, 0, delayval);
+  } else if (presence) {
+    setAllPixelsWhite(pixels08, NUMPIXELS, delayval);
+  } else if (timer > 100) {
+    turnOffAllPixels(pixels08, NUMPIXELS, delayval);
+  }
+
+  if (switch07) {
+    setAllPixels(pixels07, NUMPIXELS, 70, 255, 0, delayval);
+  } else if (presence) {
+    setAllPixelsWhite(pixels07, NUMPIXELS, delayval);
+  } else if (timer > 100) {
+    turnOffAllPixels(pixels07, NUMPIXELS, delayval);
+  }
+
+  if (switch06) {
+    setAllPixels(pixels06, NUMPIXELS, 0, 255, 40, delayval);
+  } else if (presence) {
+    setAllPixelsWhite(pixels06, NUMPIXELS, delayval);
+  } else if (timer > 100) {
+    turnOffAllPixels(pixels06, NUMPIXELS, delayval);
+  }
+
+  if (switch05) {
+    setAllPixels(pixels05, NUMPIXELS, 0, 180, 57, delayval);
+  } else if (presence) {
+    setAllPixelsWhite(pixels05, NUMPIXELS, delayval);
+  } else if (timer > 100) {
+    turnOffAllPixels(pixels05, NUMPIXELS, delayval);
+  }
+
+  if (switch04) {
+    setAllPixels(pixels04, NUMPIXELS, 50, 95, 220, delayval);
+  } else if (presence) {
+    setAllPixelsWhite(pixels04, NUMPIXELS, delayval);
+  } else if (timer > 100) {
+    turnOffAllPixels(pixels04, NUMPIXELS, delayval);
+  }
+
+  if (switch03) {
+    setAllPixels(pixels03, NUMPIXELS, 0, 95, 255, delayval);
+  } else if (presence) {
+    setAllPixelsWhite(pixels03, NUMPIXELS, delayval);
+  } else if (timer > 100) {
+    turnOffAllPixels(pixels03, NUMPIXELS, delayval);
+  }
   
-else{
-
-  if(timer>100){
-
-  for(int i=0;i<NUMPIXELS1;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels14.setPixelColor(i, pixels14.Color(0,0,0));//turn off
-
-    pixels14.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval1); // Delay for a period of time (in milliseconds).
-    
-    // Serial.println(i);  
-    }
-
+  if (switch02) {
+    setAllPixels(pixels02, NUMPIXELS, 92, 70, 150, delayval);
+  } else if (presence) {
+    setAllPixelsWhite(pixels02, NUMPIXELS, delayval);
+  } else if (timer > 100) {
+    turnOffAllPixels(pixels02, NUMPIXELS, delayval);
   }
-
-}
-
-
-
-if(distance13<30){ //human presence on stairs
-
-
-
-  for(int i=0;i<NUMPIXELS1;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels13.setPixelColor(i, pixels13.Color(25, 255, 0)); // blue color
-
-    pixels13.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval1); // Delay for a period of time (in milliseconds).
-    }
-      
-}
-
-  else if (digitalRead(logicRead)){
-  for(int i=0;i<NUMPIXELS1;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels13.setPixelColor(i, pixels13.Color(255,255,255));//Moderately white light color.
-
-    pixels13.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval1); // Delay for a period of time (in milliseconds).
-    
-    // Serial.println(i);  
-    } 
-
-
-    
-  }
-
   
-else{
-
-  if(timer>100){
-
-  for(int i=0;i<NUMPIXELS1;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels13.setPixelColor(i, pixels13.Color(0,0,0));//turn off
-
-    pixels13.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval1); // Delay for a period of time (in milliseconds).
-    
-    // Serial.println(i);  
-    }
-
+  if (switch01) {
+    setAllPixels(pixels01, NUMPIXELS, 50, 30, 235, delayval);
+  } else if (presence) {
+    setAllPixelsWhite(pixels01, NUMPIXELS, delayval);
+  } else if (timer > 100) {
+    turnOffAllPixels(pixels01, NUMPIXELS, delayval);
   }
-
 }
-
-
-if(distance12<30){ //human presence on stairs
-
-
-
-  for(int i=0;i<NUMPIXELS1;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels12.setPixelColor(i, pixels12.Color(70, 250, 5)); // blue color
-
-    pixels12.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval1); // Delay for a period of time (in milliseconds).
-    }
-      
-}
-
-  else if (digitalRead(logicRead)){
-  for(int i=0;i<NUMPIXELS1;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels12.setPixelColor(i, pixels12.Color(255,255,255));//Moderately white light color.
-
-    pixels12.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval1); // Delay for a period of time (in milliseconds).
-    
-    // Serial.println(i);  
-    } 
-
-
-    
-  }
-
-  
-else{
-
-  if(timer>100){
-
-  for(int i=0;i<NUMPIXELS1;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels12.setPixelColor(i, pixels12.Color(0,0,0));//turn off
-
-    pixels12.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval1); // Delay for a period of time (in milliseconds).
-    
-    // Serial.println(i);  
-    }
-
-  }
-
-}
-
-  
-
-if(distance11<30){ //human presence on stairs
-
-
-
-  for(int i=0;i<NUMPIXELS1;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels11.setPixelColor(i, pixels11.Color(95, 239, 10)); // blue color
-
-    pixels11.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval1); // Delay for a period of time (in milliseconds).
-    }
-      
-}
-
-  else if (digitalRead(logicRead)){
-  for(int i=0;i<NUMPIXELS1;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels11.setPixelColor(i, pixels11.Color(255,255,255));//Moderately white light color.
-
-    pixels11.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval1); // Delay for a period of time (in milliseconds).
-    
-    // Serial.println(i);  
-    } 
-
-
-    
-  }
-
-  
-else{
-
-  if(timer>100){
-
-  for(int i=0;i<NUMPIXELS1;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels11.setPixelColor(i, pixels11.Color(0,0,0));//turn off
-
-    pixels11.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval1); // Delay for a period of time (in milliseconds).
-    
-    // Serial.println(i);  
-    }
-
-  }
-
-}
-
-
-
-if(distance10<30){ //human presence on stairs
-
-
-
-  for(int i=0;i<NUMPIXELS1;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels10.setPixelColor(i, pixels10.Color(130, 249, 0)); // blue color
-
-    pixels10.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval1); // Delay for a period of time (in milliseconds).
-    }
-      
-}
-
-  else if (digitalRead(logicRead)){
-  for(int i=0;i<NUMPIXELS1;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels10.setPixelColor(i, pixels10.Color(255,255,255));//Moderately white light color.
-
-    pixels10.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval1); // Delay for a period of time (in milliseconds).
-    
-    // Serial.println(i);  
-    } 
-
-
-    
-  }
-
-  
-else{
-
-  if(timer>100){
-
-  for(int i=0;i<NUMPIXELS1;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels10.setPixelColor(i, pixels10.Color(0,0,0));//turn off
-
-    pixels10.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval1); // Delay for a period of time (in milliseconds).
-    
-    // Serial.println(i);  
-    }
-
-  }
-
-}
-
-
-
-
-if(distance9<30){ //human presence on stairs
-
-
-
-  for(int i=0;i<NUMPIXELS1;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels9.setPixelColor(i, pixels9.Color(195, 243, 0)); // blue color
-
-    pixels9.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval1); // Delay for a period of time (in milliseconds).
-    }
-      
-}
-
-  else if (digitalRead(logicRead)){
-  for(int i=0;i<NUMPIXELS1;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels9.setPixelColor(i, pixels9.Color(255,255,255));//Moderately white light color.
-
-    pixels9.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval1); // Delay for a period of time (in milliseconds).
-    
-    // Serial.println(i);  
-    } 
-
-
-    
-  }
-
-  
-else{
-
-  if(timer>100){
-
-  for(int i=0;i<NUMPIXELS1;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels9.setPixelColor(i, pixels9.Color(0,0,0));//turn off
-
-    pixels9.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval1); // Delay for a period of time (in milliseconds).
-    
-    // Serial.println(i);  
-    }
-
-  }
-
-}
-
-
-
-   if(distance8<30){ //human presence on stairs
-
-
-
-  for(int i=0;i<NUMPIXELS1;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels8.setPixelColor(i, pixels8.Color(250, 234, 5)); // blue color
-
-    pixels8.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval1); // Delay for a period of time (in milliseconds).
-    }
-      
-}
-
-  else if (digitalRead(logicRead)){
-  for(int i=0;i<NUMPIXELS1;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels8.setPixelColor(i, pixels8.Color(255,255,255));//Moderately white light color.
-
-    pixels8.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval1); // Delay for a period of time (in milliseconds).
-    
-    // Serial.println(i);  
-    } 
-
-
-    
-  }
-
-  
-else{
-
-  if(timer>100){
-
-  for(int i=0;i<NUMPIXELS1;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels8.setPixelColor(i, pixels8.Color(0,0,0));//turn off
-
-    pixels8.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval1); // Delay for a period of time (in milliseconds).
-    
-    // Serial.println(i);  
-    }
-
-  }
-
-}
-
-
-
-
-if(distance7<30){ //human presence on stairs
-
-
-
-  for(int i=0;i<NUMPIXELS;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels7.setPixelColor(i, pixels7.Color(190,115, 0)); // red color
-
-    pixels7.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval); // Delay for a period of time (in milliseconds).
-    }
-        
-}
-  else if (digitalRead(logicRead)){
-  for(int i=0;i<NUMPIXELS;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels7.setPixelColor(i, pixels7.Color(255,255,255));//Moderately white light color.
-
-    pixels7.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval); // Delay for a period of time (in milliseconds).
-    
-    // Serial.println(i);  
-    } 
-  
-
-    
-  }
-  else{
-    if (timer>100) {
-
-     for(int i=0;i<NUMPIXELS;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels7.setPixelColor(i, pixels7.Color(0,0,0));//turn off
-
-    pixels7.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval); // Delay for a period of time (in milliseconds).
-    
-    // Serial.println(i);  
-    } 
-    }
-    
-    
-  }
-
-
-
-if(distance6<30){ //human presence on stairs
-
-
-
-  for(int i=0;i<NUMPIXELS;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels6.setPixelColor(i, pixels6.Color(255,70, 0)); // red color
-
-    pixels6.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval); // Delay for a period of time (in milliseconds).
-    }
-        
-}
-  else if (digitalRead(logicRead)){
-  for(int i=0;i<NUMPIXELS;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels6.setPixelColor(i, pixels6.Color(255,255,255));//Moderately white light color.
-
-    pixels6.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval); // Delay for a period of time (in milliseconds).
-    
-    // Serial.println(i);  
-    } 
-  
-
-    
-  }
-  else{
-    if (timer>100) {
-
-     for(int i=0;i<NUMPIXELS;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels6.setPixelColor(i, pixels6.Color(0,0,0));//turn off
-
-    pixels6.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval); // Delay for a period of time (in milliseconds).
-    
-    // Serial.println(i);  
-    } 
-    }
-    
-    
-  }
-
-
-
-if(distance5<30){ //human presence on stairs
-
-
-
-  for(int i=0;i<NUMPIXELS;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels5.setPixelColor(i, pixels5.Color(255,0, 40)); // red color
-
-    pixels5.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval); // Delay for a period of time (in milliseconds).
-    }
-        
-}
-  else if (digitalRead(logicRead)){
-  for(int i=0;i<NUMPIXELS;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels5.setPixelColor(i, pixels5.Color(255,255,255));//Moderately white light color.
-
-    pixels5.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval); // Delay for a period of time (in milliseconds).
-    
-    // Serial.println(i);  
-    } 
-  
-
-    
-  }
-  else{
-    if (timer>100) {
-
-     for(int i=0;i<NUMPIXELS;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels5.setPixelColor(i, pixels5.Color(0,0,0));//turn off
-
-    pixels5.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval); // Delay for a period of time (in milliseconds).
-    
-    // Serial.println(i);  
-    } 
-    }
-    
-    
-  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-if(distance4<30){ //human presence on stairs
-
-
-
-  for(int i=0;i<NUMPIXELS;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels4.setPixelColor(i, pixels4.Color(180,0, 57)); // red color
-
-    pixels4.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval); // Delay for a period of time (in milliseconds).
-    }
-        
-}
-  else if (digitalRead(logicRead)){
-  for(int i=0;i<NUMPIXELS;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels4.setPixelColor(i, pixels4.Color(255,255,255));//Moderately white light color.
-
-    pixels4.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval); // Delay for a period of time (in milliseconds).
-    
-    // Serial.println(i);  
-    } 
-  
-
-    
-  }
-  else{
-    if (timer>100) {
-
-     for(int i=0;i<NUMPIXELS;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels4.setPixelColor(i, pixels4.Color(0,0,0));//turn off
-
-    pixels4.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval); // Delay for a period of time (in milliseconds).
-    
-    // Serial.println(i);  
-    } 
-    }
-    
-    
-  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-if(distance3<30){ //human presence on stairs
-
-
-
-  for(int i=0;i<NUMPIXELS;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels3.setPixelColor(i, pixels3.Color(95,50, 220)); // red color
-
-    pixels3.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval); // Delay for a period of time (in milliseconds).
-    }
-        
-}
-  else if (digitalRead(logicRead)){
-  for(int i=0;i<NUMPIXELS;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels3.setPixelColor(i, pixels3.Color(255,255,255));//Moderately white light color.
-
-    pixels3.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval); // Delay for a period of time (in milliseconds).
-    
-    // Serial.println(i);  
-    } 
-  
-
-    
-  }
-  else{
-    if (timer>100) {
-
-     for(int i=0;i<NUMPIXELS;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels3.setPixelColor(i, pixels3.Color(0,0,0));//turn off
-
-    pixels3.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval); // Delay for a period of time (in milliseconds).
-    
-    // Serial.println(i);  
-    } 
-    }
-    
-    
-  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-if(distance2<30){ //human presence on stairs
-
-
-
-  for(int i=0;i<NUMPIXELS;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels2.setPixelColor(i, pixels2.Color(95, 0, 255)); // red color
-
-    pixels2.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval); // Delay for a period of time (in milliseconds).
-    }
-        
-}
-  else if (digitalRead(logicRead)){
-  for(int i=0;i<NUMPIXELS;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels2.setPixelColor(i, pixels2.Color(255,255,255));//Moderately white light color.
-
-    pixels2.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval); // Delay for a period of time (in milliseconds).
-    
-    // Serial.println(i);  
-    } 
-  
-
-    
-  }
-  else{
-    if (timer>100) {
-
-     for(int i=0;i<NUMPIXELS;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels2.setPixelColor(i, pixels2.Color(0,0,0));//turn off
-
-    pixels2.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval); // Delay for a period of time (in milliseconds).
-    
-    // Serial.println(i);  
-    } 
-    }
-    
-    
-  }
-
-  
-  if(distance1<30){ //human presence on stairs
-
-
-
-  for(int i=0;i<NUMPIXELS;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels1.setPixelColor(i, pixels1.Color(70, 92, 150)); // red color
-
-    pixels1.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval); // Delay for a period of time (in milliseconds).
-    }
-        
-}
-  else if (digitalRead(logicRead)){
-  for(int i=0;i<NUMPIXELS;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels1.setPixelColor(i, pixels1.Color(255,255,255));//Moderately white light color.
-
-    pixels1.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval); // Delay for a period of time (in milliseconds).
-    
-    // Serial.println(i);  
-    } 
-  
-
-    
-  }
-  else{
-    if (timer>100) {
-
-     for(int i=0;i<NUMPIXELS;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels1.setPixelColor(i, pixels1.Color(0,0,0));//turn off
-
-    pixels1.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval); // Delay for a period of time (in milliseconds).
-    
-    // Serial.println(i);  
-    } 
-    }
-    
-    
-  }
-    if(distance<30){ //human presence on stairs
-
-
-
-  for(int i=0;i<NUMPIXELS1;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels.setPixelColor(i, pixels.Color(30, 50, 235)); // blue color
-
-    pixels.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval1); // Delay for a period of time (in milliseconds).
-    }
-      
-}
-
-  else if (digitalRead(logicRead)){
-  for(int i=0;i<NUMPIXELS1;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels.setPixelColor(i, pixels.Color(255,255,255));//Moderately white light color.
-
-    pixels.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval1); // Delay for a period of time (in milliseconds).
-    
-    // Serial.println(i);  
-    } 
-
-
-    
-  }
-
-  
-else{
-
-  if(timer>100){
-
-  for(int i=0;i<NUMPIXELS1;i++){
-
-    // pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-    pixels.setPixelColor(i, pixels.Color(0,0,0));//turn off
-
-    pixels.show(); // This sends the updated pixel color to the hardware.
-
-    delay(delayval1); // Delay for a period of time (in milliseconds).
-    
-    // Serial.println(i);  
-    }
-
-  }
-
-}
-}
-
-
-  
